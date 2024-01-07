@@ -2,10 +2,10 @@
 This is a specific instance of a final ranker in a recommender system.
 """
 
+from typing import List, Tuple
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from typing import List, Tuple
 
 
 class MultiTaskEstimator(nn.Module):
@@ -17,11 +17,11 @@ class MultiTaskEstimator(nn.Module):
         num_tasks: int,
         user_id_hash_size: int,
         user_id_embedding_dim: int,
-        user_features_size: int, 
+        user_features_size: int,
         item_id_hash_size: int,
         item_id_embedding_dim: int,
-        item_features_size: int, 
-        cross_features_size: int, 
+        item_features_size: int,
+        cross_features_size: int,
         user_value_weights: List[float],
     ) -> None:
         """
@@ -71,12 +71,12 @@ class MultiTaskEstimator(nn.Module):
 
     def process_features(
         self, 
-        user_id,  # [B]
-        user_features,  # [B, IU]
-        item_id,  # [B]
-        item_features,  # [B, II]
-        cross_features,  # [B, IC]
-        position_feature,  # [B]
+        user_id: torch.Tensor,  # [B]
+        user_features: torch.Tensor,  # [B, IU]
+        item_id: torch.Tensor,  # [B]
+        item_features: torch.Tensor,  # [B, II]
+        cross_features: torch.Tensor,  # [B, IC]
+        position_feature: torch.Tensor,  # [B]
     ) -> Tuple[torch.Tensor, torch.Tensor]:
         """
         Process features. Separated from forward function so that we can change 
@@ -113,13 +113,13 @@ class MultiTaskEstimator(nn.Module):
         return combined_features, position_embedding
 
     def forward(
-        self, 
-        user_id,  # [B]
-        user_features,  # [B, IU]
-        item_id,  # [B]
-        item_features,  # [B, II]
-        cross_features,  # [B, IC]
-        position_feature,  # [B]
+        self,
+        user_id: torch.Tensor,  # [B]
+        user_features: torch.Tensor,  # [B, IU]
+        item_id: torch.Tensor,  # [B]
+        item_features: torch.Tensor,  # [B, II]
+        cross_features: torch.Tensor,  # [B, IC]
+        position_feature: torch.Tensor,  # [B]
     ) -> torch.Tensor:
         combined_features, _ = self.process_features(
             user_id=user_id,
