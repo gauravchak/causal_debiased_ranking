@@ -5,7 +5,7 @@ We will show how to factorize ranking in a way that factorizes to remove the inf
 This is what you normally find in the (final) ranking of a recommender system, a neural network that takes user and item features and produces estimates of multiple labels and trains them by binary cross entropy loss.
 
 # position_debiased_estimator
-This extends multi_task_estimator. In addition to per-task logits computed from user + item features, this also computes logits using the position feature. The final logit is the sum of both.
+This extends multi_task_estimator. In addition to per-task logits computed from user + item features, this also computes logits using the position feature. The final logit is the sum of both. One of the earliest papers to talk about this is the [Youtube WatchNext paper](https://daiwk.github.io/assets/youtube-multitask.pdf) but you can also derive this from maximizing Mutual Information. Importance of PMI in personalization was described in [this paper](https://dl.acm.org/doi/pdf/10.1145/3523227.3546753).
 
 # factorized_estimator.py
 This extends multi_task_estimator. In addition to per-task logits computed from user + item features, this also computes logits from user, item and position. The final logit is mixture of these four logits. [Reference for Mixture-Of-Logits](https://arxiv.org/abs/2306.04039)
