@@ -61,23 +61,19 @@ class MultiTaskEstimator(nn.Module):
         self.cross_features_layer = nn.Linear(
             in_features=cross_features_size, 
             out_features=128)
-        
-        self.position_embedding = nn.Embedding(
-            100, 32
-        )
 
         # Linear layer for final prediction
         self.task_arch = nn.Linear(2 * user_id_embedding_dim + 2 * item_id_embedding_dim + 128, num_tasks)  # noqa
 
     def process_features(
-        self, 
+        self,
         user_id: torch.Tensor,  # [B]
         user_features: torch.Tensor,  # [B, IU]
         item_id: torch.Tensor,  # [B]
         item_features: torch.Tensor,  # [B, II]
         cross_features: torch.Tensor,  # [B, IC]
-        position_feature: torch.Tensor,  # [B]
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
+        position: torch.Tensor,  # [B]
+    ) -> torch.Tensor:
         """
         Process features. Separated from forward function so that we can change 
         handling of forward and train_forward in future without duplicating 
@@ -109,8 +105,7 @@ class MultiTaskEstimator(nn.Module):
             dim=1
         )
 
-        position_embedding = self.item_embedding(position_feature)
-        return combined_features, position_embedding
+        return combined_features
 
     def forward(
         self,
@@ -119,15 +114,15 @@ class MultiTaskEstimator(nn.Module):
         item_id: torch.Tensor,  # [B]
         item_features: torch.Tensor,  # [B, II]
         cross_features: torch.Tensor,  # [B, IC]
-        position_feature: torch.Tensor,  # [B]
+        position: torch.Tensor,  # [B]
     ) -> torch.Tensor:
-        combined_features, _ = self.process_features(
+        combined_features = self.process_features(
             user_id=user_id,
             user_features=user_features,
             item_id=item_id,
             item_features=item_features,
             cross_features=cross_features,
-            position_feature=position_feature,
+            position=position,
         )
         # Compute per-task scores/logits
         ui_logits = self.task_arch(combined_features)  # [B, T]
@@ -141,7 +136,7 @@ class MultiTaskEstimator(nn.Module):
         item_id,
         item_features,  # [B, II]
         cross_features,  # [B, IC]
-        position_feature,  # [B]
+        position,  # [B]
         labels
     ) -> float:
         """Compute the loss during training"""
@@ -152,7 +147,7 @@ class MultiTaskEstimator(nn.Module):
             item_id=item_id, 
             item_features=item_features, 
             cross_features=cross_features,
-            position_feature=position_feature,
+            position=position,
         )
 
         # Compute binary cross-entropy loss
@@ -187,12 +182,21 @@ model = MultiTaskEstimator(
 
 # Example input data
 user_id = torch.tensor([1, 2, 3])
-user_features = torch.randn(3, user_features_size)  
-item_id = torch.tensor([4, 5, 6])  
-item_features = torch.randn(3, item_features_size)  
+user_features = torch.randn(3, user_features_size)
+item_id = torch.tensor([4, 5, 6])
+item_features = torch.randn(3, item_features_size)
 cross_features = torch.randn(3, cross_features_size)
-position_feature = torch.tensor([1, 2, 3])
+position = torch.tensor([1, 2, 3])
 labels = torch.tensor([0, 1, 2])
+
+# Example train_forward pass
+loss = model.train_forward(
+    user_id, user_features,
+    item_id, item_features,
+    cross_features, position,
+    labels
+)
+print("Training Loss:", loss.item())
 
 # Example forward pass
 output = model(
@@ -201,12 +205,3 @@ output = model(
     cross_features
 )
 print("Forward Pass Output:", output)
-
-# Example train_forward pass
-loss = model.train_forward(
-    user_id, user_features, 
-    item_id, item_features, 
-    cross_features, position_feature, 
-    labels
-)
-print("Training Loss:", loss.item())
