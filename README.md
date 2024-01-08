@@ -18,7 +18,7 @@ This extends multi_task_estimator. In addition to per-task logits computed from 
 
 This extends factorized_estimator.py. During training, in addition to passing gradient to the mixed logits, this also trains the user, item and position logits separately.
 
-## [top_item_selctor.py](./src/top_item_selctor.py)
+## [top_item_selector.py](./src/top_item_selector.py)
 
 This shows how to use the estimators in ranking. It takes a set of items for a single user, creates batches of user and item features, computes estimates using the estimator and then combines by value_weights to select top item.
 
