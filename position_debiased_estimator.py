@@ -59,8 +59,8 @@ class PositionDebiasedEstimator(MultiTaskEstimator):
             cross_features=cross_features,
             position=position,
         )
-        position = self.position_embedding(position)
-        return combined_features, position
+        position_embedding = self.position_embedding_arch(position)
+        return combined_features, position_embedding
 
     def forward(
         self,
@@ -74,7 +74,7 @@ class PositionDebiasedEstimator(MultiTaskEstimator):
         """
         Forward pass of the model
         """
-        combined_features, position_feature = self.process_features(
+        combined_features, position_embedding = self.process_features(
             user_id=user_id,
             user_features=user_features,
             item_id=item_id,
@@ -85,5 +85,6 @@ class PositionDebiasedEstimator(MultiTaskEstimator):
         # Compute per-task scores/logits
         ui_logits = self.task_arch(combined_features)  # [B, T]
 
-        position_based_logits = self.position_based_estimator(position_feature)  # [B, T]
+        position_based_logits = self.position_based_estimator(
+            position_embedding)  # [B, T]
         return position_based_logits + ui_logits
