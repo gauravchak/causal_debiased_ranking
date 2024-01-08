@@ -107,7 +107,7 @@ class FactorizedEstimator(PositionDebiasedEstimator):
             item_arch_input
         )
 
-    def forward(
+    def compute_logits(
         self,
         user_id: torch.Tensor,  # [B]
         user_features: torch.Tensor,  # [B, IU]
@@ -115,7 +115,7 @@ class FactorizedEstimator(PositionDebiasedEstimator):
         item_features: torch.Tensor,  # [B, II]
         cross_features: torch.Tensor,  # [B, IC]
         position: torch.Tensor,  # [B]
-    ) -> torch.Tensor:
+    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:  # noqa
         (
             user_item_arch_input,
             position_arch_input,
@@ -147,4 +147,23 @@ class FactorizedEstimator(PositionDebiasedEstimator):
         )  # [B, T, 4]
         gating_weights = gating_weights.unsqueeze(2)  # [B, 4, 1]
         final_logits = torch.bmm(stacked_embeddings, gating_weights).squeeze(2)
+        return final_logits, ui_logits, position_logits, user_logits, item_logits  # noqa        
+
+    def forward(
+        self,
+        user_id: torch.Tensor,  # [B]
+        user_features: torch.Tensor,  # [B, IU]
+        item_id: torch.Tensor,  # [B]
+        item_features: torch.Tensor,  # [B, II]
+        cross_features: torch.Tensor,  # [B, IC]
+        position: torch.Tensor,  # [B]
+    ) -> torch.Tensor:
+        final_logits, _, _, _, _ = self.compute_logits(
+            user_id=user_id,
+            user_features=user_features,
+            item_id=item_id,
+            item_features=item_features,
+            cross_features=cross_features,
+            position=position,
+        )
         return final_logits
