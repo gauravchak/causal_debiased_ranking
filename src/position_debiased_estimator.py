@@ -2,7 +2,7 @@ from typing import List, Tuple
 import torch
 import torch.nn as nn
 
-from multi_task_estimator import MultiTaskEstimator
+from causal_debiased_ranking.src.multi_task_estimator import MultiTaskEstimator
 
 
 class PositionDebiasedEstimator(MultiTaskEstimator):

@@ -1,9 +1,9 @@
 import unittest
 import torch
-from causal_debiased_ranking.src.multi_task_estimator import MultiTaskEstimator
+from causal_debiased_ranking.src.factorized_estimator import FactorizedEstimator
 
 
-class TestMultiTaskEstimator(unittest.TestCase):
+class TestFactorizedEstimator(unittest.TestCase):
     def test_multi_task_estimator(self):
         # Replace the placeholder values with your actual data dimensions
         num_tasks = 3
@@ -21,7 +21,7 @@ class TestMultiTaskEstimator(unittest.TestCase):
         assert len(user_value_weights) == num_tasks
 
         # Instantiate the MultiTaskEstimator
-        model: MultiTaskEstimator = MultiTaskEstimator(
+        model = FactorizedEstimator(
             num_tasks, user_id_hash_size, user_id_embedding_dim,
             user_features_size, item_id_hash_size, item_id_embedding_dim,
             item_features_size, cross_features_size,
@@ -34,7 +34,7 @@ class TestMultiTaskEstimator(unittest.TestCase):
         item_id = torch.tensor([4, 5, 6])
         item_features = torch.randn(batch_size, item_features_size)
         cross_features = torch.randn(batch_size, cross_features_size)
-        position = torch.tensor([1, 2, 3], dtype=torch.int32)
+        position = torch.tensor(data=[1, 2, 3], dtype=torch.int32)
         labels = torch.randint(2, size=(batch_size, num_tasks))
 
         # Example train_forward pass

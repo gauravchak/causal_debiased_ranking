@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from position_debiased_estimator import PositionDebiasedEstimator
+from causal_debiased_ranking.src.position_debiased_estimator import PositionDebiasedEstimator
 
 
 class FactorizedEstimator(PositionDebiasedEstimator):
@@ -68,7 +68,7 @@ class FactorizedEstimator(PositionDebiasedEstimator):
         user_features_transformed = self.user_features_layer(user_features)
         item_features_transformed = self.item_features_layer(item_features)
         cross_features_transformed = self.cross_features_layer(cross_features)
-        position_embedding = self.position_embedding_arch(position)
+        position_arch_input = self.position_embedding_arch(position)
 
         # All features that are needed for the arch computing user only logits
         user_arch_input = torch.cat(
@@ -99,9 +99,6 @@ class FactorizedEstimator(PositionDebiasedEstimator):
             ],
             dim=1
         )
-
-        # Compute input to position shallow tower
-        position_arch_input = self.position_embedding_arch(position_embedding)
 
         return (
             user_item_arch_input,
