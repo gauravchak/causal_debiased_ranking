@@ -29,5 +29,6 @@ This shows how to use the estimators in ranking. It takes a set of items for a s
    2. [post on recent advances](https://www.linkedin.com/feed/update/urn:li:activity:7140837803960975360?updateEntityUrn=urn%3Ali%3Afs_feedUpdate%3A%28V2%2Curn%3Ali%3Aactivity%3A7140837803960975360%29)
 2. popularity bias
    1. [Don't recommend the obvious](https://dl.acm.org/doi/pdf/10.1145/3523227.3546753)
+   2. [Comfortimty aware ranking](https://arxiv.org/abs/2304.08562)
 3. Mixture of logits
    1. [Reference for Mixture-Of-Logits in Revisiting Neural Accelerators](https://arxiv.org/abs/2306.04039)
