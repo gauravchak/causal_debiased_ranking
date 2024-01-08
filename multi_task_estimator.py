@@ -42,9 +42,9 @@ class MultiTaskEstimator(nn.Module):
         self.user_value_weights = torch.tensor(user_value_weights)  # noqa TODO add device input.
 
         # Embedding layers for user and item ids
-        self.user_embedding = nn.Embedding(
+        self.user_id_embedding_arch = nn.Embedding(
             user_id_hash_size, user_id_embedding_dim)
-        self.item_embedding = nn.Embedding(
+        self.item_id_embedding_arch = nn.Embedding(
             item_id_hash_size, item_id_embedding_dim)
 
         # Linear projection layer for user features
@@ -57,13 +57,16 @@ class MultiTaskEstimator(nn.Module):
             in_features=item_features_size, 
             out_features=item_id_embedding_dim)  # noqa
 
+        self.cross_feature_proc_dim = 128
         # Linear projection layer for cross features
         self.cross_features_layer = nn.Linear(
-            in_features=cross_features_size, 
-            out_features=128)
+            in_features=cross_features_size,
+            out_features=self.cross_feature_proc_dim)
 
         # Linear layer for final prediction
-        self.task_arch = nn.Linear(2 * user_id_embedding_dim + 2 * item_id_embedding_dim + 128, num_tasks)  # noqa
+        self.task_arch = nn.Linear(
+            in_features=2 * user_id_embedding_dim + 2 * item_id_embedding_dim + self.cross_feature_proc_dim,  # noqa
+            out_features=num_tasks)
 
     def process_features(
         self,
@@ -81,8 +84,8 @@ class MultiTaskEstimator(nn.Module):
         """
 
         # Embedding lookup for user and item ids
-        user_embedding = self.user_embedding(user_id)
-        item_embedding = self.item_embedding(item_id)
+        user_id_embedding = self.user_id_embedding_arch(user_id)
+        item_id_embedding = self.item_id_embedding_arch(item_id)
 
         # Linear transformation for user features
         user_features_transformed = self.user_features_layer(user_features)
@@ -96,9 +99,9 @@ class MultiTaskEstimator(nn.Module):
         # Concatenate user embedding, user features, and item embedding
         combined_features = torch.cat(
             [
-                user_embedding,
+                user_id_embedding,
                 user_features_transformed, 
-                item_embedding,
+                item_id_embedding,
                 item_features_transformed,
                 cross_features_transformed
             ],
