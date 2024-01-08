@@ -2,7 +2,7 @@
 This is a specific instance of a final ranker in a recommender system.
 """
 
-from typing import List, Tuple
+from typing import List
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -159,52 +159,3 @@ class MultiTaskEstimator(nn.Module):
         )
 
         return cross_entropy_loss
-
-# Example usage:
-# Replace the placeholder values with your actual data dimensions
-num_tasks = 3
-user_id_hash_size = 100
-user_id_embedding_dim = 50
-user_features_size = 10
-item_id_hash_size = 200
-item_id_embedding_dim = 30
-item_features_size = 10
-cross_features_size = 10
-
-# unused in the above implementation
-user_value_weights = [0.5, 0.3, 0.2]
-
-
-# Instantiate the MultiTaskEstimator
-model = MultiTaskEstimator(
-    num_tasks, user_id_hash_size, user_id_embedding_dim,
-    user_features_size, item_id_hash_size, item_id_embedding_dim,
-    item_features_size, cross_features_size,
-    user_value_weights
-)
-
-# Example input data
-user_id = torch.tensor([1, 2, 3])
-user_features = torch.randn(3, user_features_size)
-item_id = torch.tensor([4, 5, 6])
-item_features = torch.randn(3, item_features_size)
-cross_features = torch.randn(3, cross_features_size)
-position = torch.tensor([1, 2, 3])
-labels = torch.tensor([0, 1, 2])
-
-# Example train_forward pass
-loss = model.train_forward(
-    user_id, user_features,
-    item_id, item_features,
-    cross_features, position,
-    labels
-)
-print("Training Loss:", loss.item())
-
-# Example forward pass
-output = model(
-    user_id, user_features,
-    item_id, item_features, 
-    cross_features
-)
-print("Forward Pass Output:", output)
