@@ -37,14 +37,27 @@ class FactorizedEstimator(PositionDebiasedEstimator):
             cross_features_size=cross_features_size,
             user_value_weights=user_value_weights
         )
+        self.hidden_layer_dim = 128
         # Initialize the archs for user and item features.
-        self.user_feature_arch = nn.Linear(
-            in_features=2*user_id_embedding_dim, 
-            out_features=num_tasks
+        self.user_feature_arch = nn.Sequential(
+            nn.Linear(in_features=2*user_id_embedding_dim, 
+                      out_features=self.hidden_layer_dim),
+            nn.SiLU(),
+            nn.Linear(in_features=self.hidden_layer_dim, 
+                      out_features=self.hidden_layer_dim),
+            nn.SiLU(),
+            nn.Linear(in_features=self.hidden_layer_dim, 
+                      out_features=num_tasks)
         )
-        self.item_feature_arch = nn.Linear(
-            in_features=2*item_id_embedding_dim, 
-            out_features=num_tasks
+        self.item_feature_arch = nn.Sequential(
+            nn.Linear(in_features=2*item_id_embedding_dim, 
+                      out_features=self.hidden_layer_dim),
+            nn.SiLU(),
+            nn.Linear(in_features=self.hidden_layer_dim, 
+                      out_features=self.hidden_layer_dim),
+            nn.SiLU(),
+            nn.Linear(in_features=self.hidden_layer_dim, 
+                      out_features=num_tasks)
         )
         self.gating_arch = nn.Linear(
             in_features=2 * user_id_embedding_dim + 2 * item_id_embedding_dim + self.cross_feature_proc_dim,  # noqa
