@@ -5,7 +5,6 @@ from causal_debiased_ranking.src.multi_task_estimator import MultiTaskEstimator
 
 class TestMultiTaskEstimator(unittest.TestCase):
     def test_multi_task_estimator(self):
-        # Replace the placeholder values with your actual data dimensions
         num_tasks = 3
         user_id_hash_size = 100
         user_id_embedding_dim = 50
@@ -16,7 +15,7 @@ class TestMultiTaskEstimator(unittest.TestCase):
         cross_features_size = 10
         batch_size = 3
 
-        # unused in the above implementation
+        # unused in the baseline MultiTaskEstimator implementation
         user_value_weights = [0.5, 0.3, 0.2]
         assert len(user_value_weights) == num_tasks
 
