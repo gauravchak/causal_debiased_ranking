@@ -2,6 +2,10 @@
 
 We will show how to factorize ranking in a way that factorizes to remove the influence of power users and items. Using causal recommendation will help you improve the experience of users early on in their adoption curve without compromising the experience of your power users. Same on the item side.
 
+[![Code Walktrough](https://img.youtube.com/vi/sc4ZwcLfD98/0.jpg)](https://www.youtube.com/watch?v=sc4ZwcLfD98)
+
+[![Code Walktrough](https://img.youtube.com/vi/mnkd1z-AWMw/0.jpg)](https://www.youtube.com/watch?v=mnkd1z-AWMw)
+
 ## [multi_task_estimator.py](./src/multi_task_estimator.py)
 
 This is what you normally find in the (final) ranking of a recommender system, a neural network that takes user and item features and produces estimates of multiple labels and trains them by binary cross entropy loss.
